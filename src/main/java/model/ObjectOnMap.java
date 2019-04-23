@@ -5,6 +5,7 @@ public abstract class ObjectOnMap {
     private Integer y;
 
     protected ObjectOnMap(Integer x, Integer y) {
+        
         this.x = x;
         this.y = y;
     }
