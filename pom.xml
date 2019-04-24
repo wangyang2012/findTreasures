@@ -6,13 +6,23 @@
     <packaging>jar</packaging>
     
   <dependencies>
-  	<!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
-	<dependency>
-	    <groupId>org.junit.jupiter</groupId>
-	    <artifactId>junit-jupiter-engine</artifactId>
-	    <version>5.4.2</version>
-	    <scope>test</scope>
-	</dependency>
+        <dependency>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
+          <version>1.2.17</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.4.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.9</version>
+        </dependency>
+
   </dependencies>
   
     <build>
@@ -25,8 +35,6 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-
-
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>

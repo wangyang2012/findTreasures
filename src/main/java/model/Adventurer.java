@@ -9,12 +9,18 @@ public class Adventurer extends ObjectOnMap {
         A, G, D;
     }
 
+    private String name;
     private DirectionEnum direction;
     private Integer nbTreasure;
+    private Integer priority; // order in the inputFile, The smaller the value, the higher the priority
+    private String actions;
 
-    protected Adventurer(Integer x, Integer y, Character direction) {
+
+    public Adventurer(String name, Integer x, Integer y, String direction, String actions) {
         super(x, y);
-        this.direction = DirectionEnum.valueOf(direction.toString());
+        this.name = name;
+        this.direction = DirectionEnum.valueOf(direction);
+        this.actions = actions;
         this.nbTreasure = 0;
     }
 
@@ -28,4 +34,6 @@ public class Adventurer extends ObjectOnMap {
         // TODO: switch enum or if ("A".equals)
         return true;
     }
+
+    // get priority
 }
