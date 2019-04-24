@@ -48,7 +48,7 @@ public class Process {
             String[] fields = line.split("-");
             switch (fields[0]) {
                 case "C":
-                    MapUtils.createMap(fields);
+                    MapUtils.initMap(fields);
                     break;
                 case "M":
                     MapUtils.addMountain(fields);

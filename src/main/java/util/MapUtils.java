@@ -7,7 +7,7 @@ public abstract class MapUtils {
     private static ObjectOnMap[][] map;
     private static int nbAdventurer = 0;
 
-    public static ObjectOnMap[][] createMap(String[] fields) throws TreasuresException {
+    public static ObjectOnMap[][] initMap(String[] fields) throws TreasuresException {
         if (fields == null || fields.length != 3) {
             throw new TreasuresException("Le format de la ligne est erroné.");
         }
@@ -19,6 +19,10 @@ public abstract class MapUtils {
         Integer x = Integer.valueOf(fields[1]);
         Integer y = Integer.valueOf(fields[2]);
 
+        return createMap(x, y);
+    }
+
+    public static ObjectOnMap[][] createMap(Integer x, Integer y) throws TreasuresException {
         if (x == null || y == null || x <= 0 || y <= 0) {
             throw new TreasuresException("Erreur lors de la création de la carte");
         }
