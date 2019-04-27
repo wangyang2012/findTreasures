@@ -1,8 +1,17 @@
 package util;
 
 import model.*;
+import model.Process;
+import org.apache.log4j.Logger;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public abstract class MapUtils {
+
+    public static final Logger logger = Logger.getLogger(MapUtils.class);
 
     private static ObjectOnMap[][] map;
     private static int nbAdventurer = 0;
@@ -16,18 +25,18 @@ public abstract class MapUtils {
             throw new TreasuresException("La carte existe déjà.");
         }
 
-        Integer x = Integer.valueOf(fields[1]);
-        Integer y = Integer.valueOf(fields[2]);
+        Integer nbLines = Integer.valueOf(fields[1]);
+        Integer nbColumns = Integer.valueOf(fields[2]);
 
-        return createMap(x, y);
+        return createMap(nbLines, nbColumns);
     }
 
-    public static ObjectOnMap[][] createMap(Integer x, Integer y) throws TreasuresException {
-        if (x == null || y == null || x <= 0 || y <= 0) {
+    public static ObjectOnMap[][] createMap(Integer nbLines, Integer nbColumns) throws TreasuresException {
+        if (nbLines == null || nbColumns == null || nbLines <= 0 || nbColumns <= 0) {
             throw new TreasuresException("Erreur lors de la création de la carte");
         }
         if (map == null) {
-            map = new ObjectOnMap[x][y];
+            map = new ObjectOnMap[nbLines][nbColumns];
         } else {
             throw new TreasuresException("La carte existe déjà, impossible de la recréer");
         }
@@ -98,8 +107,48 @@ public abstract class MapUtils {
         map[x][y] = adventurer;
     }
 
-    public static void printMap() {
-        // TODO: to continue...
+    public static void printMap() throws TreasuresException {
+        String mapStr = mapToString();
+        writeToFile(mapStr);
+    }
+
+    public static String mapToString() throws TreasuresException {
+        StringBuilder sb = new StringBuilder();
+        if (map != null) {
+            for (int i=0; i<map.length; i++) {
+                for (int j=0; j<map[i].length; j++) {
+
+                    if (map[i][j] == null) {
+                        sb.append("*");
+                    } else {
+                        ObjectOnMap object = map[i][j];
+                        if (object instanceof Mountain) {
+                            sb.append("M");
+                        } else if (object instanceof Treasure) {
+                            sb.append("T(" + ((Treasure) object).getAmount() + ")");
+                        } else if (object instanceof Adventurer) {
+                            sb.append("A");
+                        }
+                    }
+                    sb.append("\t");
+                }
+                sb.append("\n");
+            }
+        }
+        return sb.toString();
+    }
+
+    private static void writeToFile(String value) throws TreasuresException {
+        if (StringUtils.isBlank(value)) {
+            throw new TreasuresException("Aucune donnée à écrire dans le fichier");
+        }
+        logger.debug(value);
+        Path path = Paths.get("map.txt");
+        try {
+            Files.write(path, value.getBytes());
+        } catch (IOException e) {
+            throw new TreasuresException("Une erreur est survenue lors de l'écriture de fichier.", e);
+        }
     }
 }
 
