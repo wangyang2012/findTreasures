@@ -1,4 +1,5 @@
 import model.ObjectOnMap;
+import model.Process;
 import model.TreasuresException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -7,13 +8,13 @@ import util.MapUtils;
 public class MapUtilsTest {
     @Test
     public void createMapTest() throws TreasuresException {
-        int y = 3;
-        int x = 5;
+        int nbLines = 3;
+        int nbColumns = 5;
 
-        ObjectOnMap[][] map = MapUtils.createMap(y, x);
-        Assertions.assertEquals(y, map.length);
-        for (int i=0; i<y; i++) {
-            Assertions.assertEquals(x, map[i].length);
+        ObjectOnMap[][] map = MapUtils.createMap(nbColumns, nbLines);
+        Assertions.assertEquals(nbLines, map.length);
+        for (int i=0; i<nbLines; i++) {
+            Assertions.assertEquals(nbColumns, map[i].length);
         }
 
         Assertions.assertThrows(TreasuresException.class, () -> MapUtils.createMap(null, null));
@@ -24,12 +25,39 @@ public class MapUtilsTest {
 
     @Test
     public void writeMapTest() throws TreasuresException {
-        MapUtils.createMap(6, 9);
+        MapUtils.createMap(3, 4);
+        String mapStr = MapUtils.mapToString();
+        System.out.println(mapStr);
+    }
 
+    @Test
+    public void createMountainTest() throws TreasuresException {
+        MapUtils.createMap(3, 4);
+        String[] mountainFields = "C-1-2".split("-");
+        MapUtils.addMountain(mountainFields);
+        String mapStr = MapUtils.mapToString();
+        System.out.println(mapStr);
+    }
+
+    @Test
+    public void createTreasuresTest() throws TreasuresException {
+        MapUtils.createMap(3, 4);
+
+        String[] mountainFields = "C-1-1".split("-");
+        MapUtils.addMountain(mountainFields);
+
+        String[] treasureFields = "T-0-3-2".split("-");
+        MapUtils.addTreasure(treasureFields);
         String mapStr = MapUtils.mapToString();
         System.out.println(mapStr);
     }
 
 
+    @Test
+    public void testReadFile() throws TreasuresException {
+        new Process("I:\\\\test.txt");
+        String mapStr = MapUtils.mapToString();
+        System.out.println(mapStr);
+    }
 }
 

@@ -1,6 +1,7 @@
 package model;
 
 import org.apache.log4j.Logger;
+import util.FileUtils;
 import util.MapUtils;
 import util.StringUtils;
 
@@ -10,12 +11,16 @@ public class Process {
 
     public static final Logger logger = Logger.getLogger(Process.class);
 
-    public static final boolean COLLISION_DETECTION = true; // Si true, les tondeuses ne peuvent pas se superposer
-
     private ObjectOnMap[][] map;
 
     /****** Constructors ******/
-    public Process() {
+    public Process(String fileToRead) {
+        try {
+            List<String> lines = FileUtils.readFile(fileToRead);
+            run(lines);
+        } catch (TreasuresException e) {
+            logger.error("Une erreur est survenue lors de la création de la carte");
+        }
     }
 
     /****** actions *******/

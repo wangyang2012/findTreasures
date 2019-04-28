@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public abstract class FileUtils {
-    public static List<String>  readFile(String fileName) throws TreasuresException {
+    public static List<String> readFile(String fileName) throws TreasuresException {
         try {
             return Files.readAllLines(Paths.get(fileName), StandardCharsets.UTF_8);
         } catch (IOException e) {

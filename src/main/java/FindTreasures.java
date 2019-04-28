@@ -1,33 +1,20 @@
 import model.Process;
-import model.TreasuresException;
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
-import util.FileUtils;
-
-import java.util.List;
 
 public class FindTreasures {
     public static final Logger logger = Logger.getLogger(FindTreasures.class);
 
     public static void main(String[] args) {
+        BasicConfigurator.configure();
+
         if (args == null || args.length != 1) {
             logger.error("Veuillez renseigner le fichier d'entrée");
         } else {
-            String fileName = args[0];
-
-            // read file
-            List<String> lines = null;
-            try {
-                lines = FileUtils.readFile(fileName);
-            } catch (TreasuresException e) {
-                logger.error("Impossible de lire le fichier d'entrée");
-                return;
-            }
+            String fileToRead = args[0];
 
             // create Travail
-            Process process = new Process();
-
-            // Déroulement
-            process.run(lines);
+            Process process = new Process(fileToRead);
         }
 
     }

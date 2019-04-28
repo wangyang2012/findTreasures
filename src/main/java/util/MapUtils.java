@@ -25,14 +25,14 @@ public abstract class MapUtils {
             throw new TreasuresException("La carte existe déjà.");
         }
 
-        Integer nbLines = Integer.valueOf(fields[1]);
-        Integer nbColumns = Integer.valueOf(fields[2]);
+        Integer x = Integer.valueOf(fields[1]);
+        Integer y = Integer.valueOf(fields[2]);
 
-        return createMap(nbLines, nbColumns);
+        return createMap(x, y);
     }
 
-    public static ObjectOnMap[][] createMap(Integer nbLines, Integer nbColumns) throws TreasuresException {
-        if (nbLines == null || nbColumns == null || nbLines <= 0 || nbColumns <= 0) {
+    public static ObjectOnMap[][] createMap(Integer nbColumns, Integer nbLines) throws TreasuresException {
+        if (nbColumns == null || nbLines == null || nbColumns <= 0 || nbLines <= 0) {
             throw new TreasuresException("Erreur lors de la création de la carte");
         }
         if (map == null) {
@@ -55,12 +55,12 @@ public abstract class MapUtils {
         Integer x = Integer.valueOf(fields[1]);
         Integer y = Integer.valueOf(fields[2]);
 
-        if (x == null || y == null || x <= 0 || y <= 0 || x >= map.length || y >= map[x].length || map[x][y] != null) {
+        if (x == null || y == null || x < 0 || y < 0 || y >= map.length || x >= map[y].length || map[y][x] != null) {
             throw new TreasuresException("Erreur lors de la création de la montagne");
         }
 
         Mountain mountain = new Mountain(x, y);
-        map[x][y] = mountain;
+        map[y][x] = mountain;
     }
 
     public static void addTreasure(String[] fields) throws TreasuresException {
@@ -76,12 +76,12 @@ public abstract class MapUtils {
         Integer y = Integer.valueOf(fields[2]);
         Integer amount = Integer.valueOf(fields[3]);
 
-        if (x == null || y == null || x <= 0 || y <= 0 || amount <= 0 || x >= map.length || y >= map[x].length || map[x][y] != null) {
-            throw new TreasuresException("Erreur lors de la création de la montagne");
+        if (x == null || y == null || x < 0 || y < 0 || amount <= 0 || y >= map.length || x >= map[y].length || map[y][x] != null) {
+            throw new TreasuresException("Erreur lors de la création du trésor");
         }
 
         Treasure treasure = new Treasure(x, y, amount);
-        map[x][y] = treasure;
+        map[y][x] = treasure;
     }
 
     public static void createAdventurer(String[] fields) throws TreasuresException {
@@ -99,12 +99,12 @@ public abstract class MapUtils {
         String direction = fields[4];
         String actions = fields[5];
 
-        if (x == null || y == null || x <= 0 || y <= 0 || x >= map.length || y >= map[x].length || map[x][y] != null || StringUtils.isBlank(name) || StringUtils.isBlank(direction) || direction.length() != 1 || StringUtils.isBlank(actions)) {
+        if (x == null || y == null || x < 0 || y < 0 || y >= map.length || x >= map[y].length || map[y][x] != null || StringUtils.isBlank(name) || StringUtils.isBlank(direction) || direction.length() != 1 || StringUtils.isBlank(actions)) {
             throw new TreasuresException("Erreur lors de la création de l'aventurier");
         }
 
         Adventurer adventurer = new Adventurer(name, x, y, direction, actions);
-        map[x][y] = adventurer;
+        map[y][x] = adventurer;
     }
 
     public static void printMap() throws TreasuresException {
@@ -117,7 +117,7 @@ public abstract class MapUtils {
         if (map != null) {
             for (int i=0; i<map.length; i++) {
                 for (int j=0; j<map[i].length; j++) {
-
+                    boolean isLargeCase = false;
                     if (map[i][j] == null) {
                         sb.append("*");
                     } else {
@@ -126,11 +126,19 @@ public abstract class MapUtils {
                             sb.append("M");
                         } else if (object instanceof Treasure) {
                             sb.append("T(" + ((Treasure) object).getAmount() + ")");
+                            isLargeCase = true;
                         } else if (object instanceof Adventurer) {
                             sb.append("A");
                         }
                     }
-                    sb.append("\t");
+                    // write espaces to align columns
+                    if (j < map[i].length-1) {
+                        // if is large case, write only one \t, else write two \t
+                        sb.append("\t");
+                        if (!isLargeCase) {
+                            sb.append("\t");
+                        }
+                    }
                 }
                 sb.append("\n");
             }
