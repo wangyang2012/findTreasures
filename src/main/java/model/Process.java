@@ -27,13 +27,14 @@ public class Process {
     public void run(List<String> lines) {
         try {
             this.init(lines);
-//            this.roulerTondeuses();
+            MapUtils.moveAdventurers();
             logger.info("Travail est terminé avec succès");
 //            this.printResult();
         } catch (TreasuresException e) {
             logger.error("Erreur: " + e.getMessage());
         }
     }
+
 
     /**
      * Create map, mountains, treasors and adventurers
@@ -45,7 +46,8 @@ public class Process {
             throw new TreasuresException("Le fichier d'entrée est vide");
         }
         for (String line : lines) {
-            if (StringUtils.isBlank(line)) {
+            // empty lines or lines which start with "#" should be ignored
+            if (StringUtils.isBlank(line) || line.startsWith("#")) {
                 continue;
             }
             // remove espaces beside "-"
@@ -69,6 +71,8 @@ public class Process {
             }
         }
     }
+
+
 
 //
 //    /**
@@ -196,4 +200,5 @@ public class Process {
 //    public void setTondeuses(List<Tondeuse> tondeuses) {
 //        this.tondeuses = tondeuses;
 //    }
+
 }

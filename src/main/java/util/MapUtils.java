@@ -1,20 +1,22 @@
 package util;
 
 import model.*;
-import model.Process;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class MapUtils {
 
     public static final Logger logger = Logger.getLogger(MapUtils.class);
 
     private static ObjectOnMap[][] map;
-    private static int nbAdventurer = 0;
+    private static List<Adventurer> adventurersList = new ArrayList<>();
+    private static Integer maxNumberOfMoves = 0;    // the max of number of move of each methods.
 
     public static ObjectOnMap[][] initMap(String[] fields) throws TreasuresException {
         if (fields == null || fields.length != 3) {
@@ -105,6 +107,16 @@ public abstract class MapUtils {
 
         Adventurer adventurer = new Adventurer(name, x, y, direction, actions);
         map[y][x] = adventurer;
+        adventurersList.add(adventurer);
+
+        // calcul number of moves of this adventurer and update maxNumberOfMoves if this value is bigger
+        if (StringUtils.isNotBlank(actions)) {
+            String[] splitedActions = actions.split("A");
+            Integer numberOfMoves = splitedActions.length;
+            if (numberOfMoves != null && numberOfMoves > maxNumberOfMoves) {
+                maxNumberOfMoves = numberOfMoves;
+            }
+        }
     }
 
     public static void printMap() throws TreasuresException {
@@ -128,13 +140,18 @@ public abstract class MapUtils {
                             sb.append("T(" + ((Treasure) object).getAmount() + ")");
                             isLargeCase = true;
                         } else if (object instanceof Adventurer) {
-                            sb.append("A");
+                            sb.append("A(" + ((Adventurer)object).getName() + ")");
+                            isLargeCase = true;
+                        } else if (object instanceof AdventurerOnTreasure) {
+                            AdventurerOnTreasure aot = (AdventurerOnTreasure)object;
+                            sb.append("AT(" + aot.getAdventurer().getName() + " " + aot.getTreasure().getAmount() + ")");
+                            isLargeCase = true;
                         }
                     }
                     // write espaces to align columns
                     if (j < map[i].length-1) {
                         // if is large case, write only one \t, else write two \t
-                        sb.append("\t");
+                        sb.append("\t\t");
                         if (!isLargeCase) {
                             sb.append("\t");
                         }
@@ -156,6 +173,52 @@ public abstract class MapUtils {
             Files.write(path, value.getBytes());
         } catch (IOException e) {
             throw new TreasuresException("Une erreur est survenue lors de l'écriture de fichier.", e);
+        }
+    }
+
+    public static void moveAdventurers() {
+        for (int i=0; i<maxNumberOfMoves; i++) {
+            for (Adventurer adventurer: adventurersList) {
+                adventurer.move(i);
+            }
+        }
+    }
+
+    public static boolean isLegalMove(int nextY, int nextX) {
+        if (nextY >= map.length || nextX >= map[nextY].length) {
+            return false;
+        }
+        return true;
+    }
+
+
+    public static void moveObjectWithoutCheck(Integer y, Integer x, int nextY, int nextX) {
+        ObjectOnMap oldObject = map[y][x];
+        ObjectOnMap newObject = map[nextY][nextX];
+        ObjectOnMap tempObject;
+
+        // treate old object
+        if (oldObject instanceof AdventurerOnTreasure) {
+            tempObject = ((AdventurerOnTreasure) oldObject).getAdventurer();
+            map[y][x] = ((AdventurerOnTreasure) oldObject).getTreasure();
+        } else {
+            tempObject = map[y][x];
+        }
+
+        // do move
+        tempObject.setX(nextX);
+        tempObject.setY(nextY);
+        if (newObject == null) {
+            map[nextY][nextX] = tempObject;
+        } else {
+            // new case is used by a treasure, take the treasure
+            Treasure treasure = (Treasure)map[nextY][nextX];
+            ((Adventurer)tempObject).takeTreasure(treasure);
+            if (treasure.getAmount() == 0) {
+                map[nextY][nextX] = tempObject;
+            } else {
+                map[nextY][nextX] = new AdventurerOnTreasure((Adventurer) tempObject, treasure);
+            }
         }
     }
 }

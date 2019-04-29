@@ -59,5 +59,12 @@ public class MapUtilsTest {
         String mapStr = MapUtils.mapToString();
         System.out.println(mapStr);
     }
+
+    @Test
+    public void test() {
+        String value = "AADDAGA";
+        String[] values = value.split("A");
+        System.out.println(values.length);
+    }
 }
 
