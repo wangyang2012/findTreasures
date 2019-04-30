@@ -1,3 +1,4 @@
+import model.AdventurerOnTreasure;
 import model.ObjectOnMap;
 import model.Process;
 import model.TreasuresException;
@@ -10,6 +11,8 @@ public class MapUtilsTest {
     public void createMapTest() throws TreasuresException {
         int nbLines = 3;
         int nbColumns = 5;
+
+        AdventurerOnTreasure ao = new AdventurerOnTreasure();
 
         ObjectOnMap[][] map = MapUtils.createMap(nbColumns, nbLines);
         Assertions.assertEquals(nbLines, map.length);
